@@ -1,2 +1,2 @@
-# Tester-komponent-w
+# Tester-komponentow
 układ testujący rezystory, diody
