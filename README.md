@@ -3,7 +3,7 @@
 ### 🇵🇱 Wersja Polska
 
 ## 📘 Opis projektu  
-Projekt przedstawia **tester podstawowych elementów elektronicznych** zbudowany na platformie **Arduino**.  
+Projekt przedstawia **tester podstawowych elementów elektronicznych** zbudowany na platformie **Arduino UNO R3**.  
 Urządzenie umożliwia **pomiar rezystorów**, **testowanie diod (w tym LED)** oraz **analizę tranzystorów NPN**.  
 Wyniki pomiarów są wyświetlane na wyświetlaczu **LCD 16x2**.
 
@@ -16,6 +16,44 @@ Wyniki pomiarów są wyświetlane na wyświetlaczu **LCD 16x2**.
 - 🔌 **Tryb tranzystora (NPN)** — pomiar napięć na bazie przy włączonym i wyłączonym zasilaniu.  
 - 🔄 **Menu trybów** obsługiwane za pomocą trzech przycisków (lub pojedynczego z obsługą kliknięć).  
 - 🖥️ **Wyświetlanie wyników** na ekranie LCD 16x2.  
+
+---
+
+## 💻 Wymagania techniczne (minimalne)
+
+| Komponent | Wymaganie minimalne |
+|------------|---------------------|
+| Mikrokontroler | **Arduino UNO R3** (lub kompatybilny) |
+| Wyświetlacz | LCD 16x2 (HD44780 lub zgodny) |
+| Rezystor odniesienia | 10 kΩ (dokładność min. 1%) |
+| Zasilanie | 5V DC (USB lub zewnętrzne) |
+| Przyciski | minimum 3 wejścia cyfrowe z PULLUP |
+| Przewody połączeniowe | standardowe przewody męsko-męskie |
+| Płytka stykowa | zalecana do testów prototypowych |
+
+---
+
+## 💻 Wymagania systemowe i komputerowe
+
+| Komponent | Minimalne wymaganie |
+|------------|---------------------|
+| **System operacyjny** | Windows 10 / Linux (Ubuntu 20.04+) / macOS 10.15+ |
+| **Procesor** | Dwurdzeniowy 1.5 GHz lub lepszy |
+| **Pamięć RAM** | Minimum 2 GB (zalecane 4 GB) |
+| **Port USB** | Wymagany do komunikacji z Arduino UNO R3 |
+| **Oprogramowanie** | Arduino IDE 2.0 lub nowsze (zainstalowane sterowniki CH340/ATmega) |
+| **Dodatkowe biblioteki** | LiquidCrystal.h, OneButton.h |
+
+---
+
+## 🔩 Wykorzystany sprzęt
+
+- Płytka rozwojowa **Arduino UNO R3**  
+- Wyświetlacz **LCD 16x2**  
+- Trzy przyciski do wyboru trybu pracy  
+- Rezystor odniesienia 10kΩ  
+- Przewody połączeniowe i płytka stykowa  
+- Testowane elementy: **rezystory, diody, tranzystory NPN**
 
 ---
 
@@ -72,7 +110,15 @@ Urządzenie jest zasilane z portu **USB (5V)** lub z zewnętrznego źródła 5V.
    - `2` — test diody,  
    - `3` — test tranzystora.  
 3. Odczytaj wynik na ekranie LCD.  
-4. Kliknij dwukrotnie przycisk  `1` , aby wrócić do menu głównego.  
+4. Kliknij dwukrotnie przycisk `1`, aby wrócić do menu głównego.  
+
+---
+
+## 📸 Przykładowy wygląd urządzenia
+
+```markdown
+![Tester Elementów - Arduino](images/tester.jpg)
+```
 
 ---
 
@@ -87,7 +133,7 @@ Licencja: **MIT License**
 # 🔧 Electronic Component Tester (Arduino)
 
 ## 📘 Project Description  
-This project is an **Arduino-based electronic component tester** designed to measure **resistors**, **diodes (including LEDs)**, and **NPN transistors**.  
+This project is an **Arduino UNO R3-based electronic component tester** designed to measure **resistors**, **diodes (including LEDs)**, and **NPN transistors**.  
 Measurement results are displayed on a **16x2 LCD screen**.
 
 ---
@@ -101,13 +147,39 @@ Measurement results are displayed on a **16x2 LCD screen**.
 - 🖥️ **LCD Display** for real-time measurement results.  
 
 ---
-
 ## 🧠 Working Principle
 
 Depending on the selected mode:
 1. **Resistor** – calculates resistance using a voltage divider circuit.  
 2. **Diode** – applies test voltage and measures the voltage drop across the diode.  
-3. **Transistor** – measures voltage changes on the transistor base.  
+3. **Transistor** – measures voltage changes on the transistor base.
+   
+---
+
+## 💻 Technical Requirements (Minimum)
+
+| Component | Minimum Specification |
+|------------|-----------------------|
+| Microcontroller | **Arduino UNO R3** (or compatible board) |
+| Display | 16x2 LCD (HD44780 compatible) |
+| Reference Resistor | 10 kΩ (1% tolerance or better) |
+| Power Supply | 5V DC (USB or external) |
+| Buttons | at least 3 digital inputs with PULLUP |
+| Jumper Wires | standard male-male |
+| Breadboard | recommended for prototype testing |
+
+---
+
+## 💻 System and Computer Requirements
+
+| Component | Minimum Requirement |
+|------------|----------------------|
+| **Operating System** | Windows 10 / Linux (Ubuntu 20.04+) / macOS 10.15+ |
+| **Processor** | Dual-core 1.5 GHz or better |
+| **RAM** | Minimum 2 GB (4 GB recommended) |
+| **USB Port** | Required for Arduino UNO R3 communication |
+| **Software** | Arduino IDE 2.0 or newer (with CH340/ATmega drivers installed) |
+| **Additional Libraries** | LiquidCrystal.h, OneButton.h |
 
 ---
 
@@ -120,7 +192,13 @@ Install these from the **Arduino IDE Library Manager**.
 
 ---
 
-## 🔌 Wiring (Pinout)
+## 📸 Example Photo
+
+```markdown
+![Electronic Component Tester - Arduino](images/tester.jpg)
+```
+
+---## 🔌 Wiring (Pinout)
 
 | Component | Arduino Pin | Description |
 |------------|--------------|-------------|
@@ -155,11 +233,10 @@ Powered via **USB (5V)** or an external regulated **5V source**.
    - `2` — diode test,  
    - `3` — transistor test.  
 3. Read the results on the LCD.  
-4. Double-click  `1`  to return to the main menu.  
+4. Double-click `1` to return to the main menu.  
 
 ---
 
 ## 🧑‍💻 Author
 Project by **[Karol Kaszuba]**  
 License: **MIT License**
-
