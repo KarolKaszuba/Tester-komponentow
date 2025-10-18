@@ -18,8 +18,12 @@
 #define U           5.0     // Napiecie U
 
 // do testowania diody
-#define TEST_DIODE_5V   11 //pin podający napięcie 
-#define PIN_DIODE       A1 //pin pomiarowy do diody
+#define TEST_DIODE_5V      11 //pin podający napięcie 
+#define PIN_DIODE          A1 //pin pomiarowy do diody
+
+//do testowania tranzystora npn
+#define PIN_TRANSISTOR     A2 
+#define TEST_TRANSISTOR_5V 12
  
 //deklaracja funkcji
 void startInfo();
@@ -29,9 +33,12 @@ void handleDoubleClick();
 void handleButtons();
 void getResistanceStr();
 void testDiode();
+void testTransistor();
 
 //time delay
 unsigned long prevTime{0};
+// unsigned long prevTime1{0};
+unsigned long prevTime2{0};
 //const unsigned long interval{200}; //1000 milisekund
 
 OneButton P1_res = OneButton(P1_RESISTOR, true); // true bo aktuwuje gdy LOW
@@ -40,7 +47,6 @@ int lastState3 = HIGH; // bo pullup | chce łapać zbocze rosnące
 
 int currentMode = MODE_MENU;
 bool inResMode = false;
-
 
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7); // podłączenie wyswietlacza do pinów 2 (RS), 3 (Enable), 4 (D4), 5 (D5), 5 (D6) i 7 (D7).
 
@@ -57,6 +63,10 @@ void setup() {
   pinMode(TEST_DIODE_5V, OUTPUT); //pin podający napięcie do testu diody
   digitalWrite(TEST_DIODE_5V, LOW); //LOW zeby mieć pewność ze nie ma napiecia
 
+  //pin podający napięcie do testu Tranzystora
+  pinMode(TEST_TRANSISTOR_5V, OUTPUT); 
+  
+
   P1_res.attachClick(handleClick);
   P1_res.attachDoubleClick(handleDoubleClick);
 }
@@ -66,58 +76,75 @@ void loop() {
 
   P1_res.tick();
   handleButtons();
-
-
+ 
   switch(currentMode){
     case MODE_MENU:
       break;
-
     case MODE_RESISTOR:
       if ( now - prevTime >= 300){
         prevTime = now;
-
         getResistanceStr();
       }
       break;
-
     case MODE_DIODE:
       if ( now - prevTime >= 300){
         prevTime = now;
-
-        testDiode();
-        
+        testDiode();  
       }
       break;
     case MODE_TRANSISTOR:
-
       if ( now - prevTime >= 300){
         prevTime = now;
-
-        digitalWrite ( TEST_DIODE_5V, LOW);
-        lcd.clear();
-        lcd.print("zaraz zmierze T");
-        
+        testTransistor();
       }
-      
       break;
-
-
   }
   delay(50);
 }
 
+void testTransistor(){
+    unsigned long prevTime1{0};
+    int highBase{0};
+    int lowBase{0};
+    double vLowBase{0.0};
+    double vHighBase{0.0};
+    unsigned long now = millis();
+    int stage{0};
+
+    if(now - prevTime1 < 500)return ;
+    prevTime1 = now;
+
+    digitalWrite ( TEST_DIODE_5V, LOW);
+
+    //pomiar z wylaczoną bazą
+    digitalWrite(TEST_TRANSISTOR_5V, LOW);
+    lowBase = analogRead(PIN_TRANSISTOR);
+    vLowBase = ( lowBase *  5.0 ) / 1023.0;
+
+    //pomiar z wlaczoną bazą
+    digitalWrite(TEST_TRANSISTOR_5V, HIGH);
+    highBase = analogRead(PIN_TRANSISTOR);
+    vHighBase = ( highBase *  5.0 ) / 1023.0;
+
+    lcd.clear();
+    lcd.print("Lo_BASE V: " + String(vLowBase));
+    lcd.setCursor(0,1);
+    lcd.print("Hi_BASE V: " + String(vHighBase));
+}
+
 void testDiode(){
-  digitalWrite( TEST_DIODE_5V, HIGH);
+
+  digitalWrite(TEST_TRANSISTOR_5V, LOW); // wylaczam baze na tranzystorze
+  digitalWrite( TEST_DIODE_5V, HIGH); // wlaczam napiecie na diodzie
   delay(20); // dla stabilizacji
 
   double voltageD = (analogRead(PIN_DIODE) * 5.0) / 1023.0; 
 
   // Serial.println(analogRead(PIN_DIODE));
-  // //digitalWrite ( TEST_DIODE_5V, LOW);
   // Serial.println(voltageD);
 
   lcd.clear();
-  
+ 
   if ( voltageD > 0.2 and voltageD < 0.3 ){
     lcd.print(" German Diode");
   }
@@ -137,23 +164,15 @@ void testDiode(){
     lcd.setCursor(1,1);
     lcd.print("no diode ");
   }
-
   lcd.setCursor(10,1);
   lcd.print("V "+ String(voltageD));
-
 }
 
-
 void getResistanceStr(){
-
-
-
     int iterations = 10; // będzie liczyć średnią z 10 pomiarów 
     double sumOfR2{0.0};
 
-
     for (int k = 0; k < iterations; k++){
-
         // Serial.print(": Odczyt ADC = ");
         Serial.println(analogRead(PIN_RES));
 
@@ -164,7 +183,7 @@ void getResistanceStr(){
           sumOfR2 += (U*R1/u1) - R1;
           //sumOfR2 += R1 * ((U - u1) / u1);
   }
-
+ 
   double R2 = sumOfR2 / iterations;
   String resultS;
 
@@ -192,26 +211,22 @@ void handleButtons(){
   int currentState2 = digitalRead(P2_DIODE);
   int currentState3 = digitalRead(P3_TRANSISTOR);
 
-
-  
   if(lastState2 == LOW and currentState2 == HIGH){
-    inResMode = false;
+    inResMode = false; // wyszedlem z trybu resistor MODE (f)-poza (t)- w trybie
 
     lcd.clear();
     lcd.print("DIODE MODE");
     currentMode = MODE_DIODE;
     delay(500);
   }
-  
   if(lastState3 == LOW and currentState3 == HIGH){
-    inResMode = false;
+    inResMode = false;// wyszedlem z trybu resistor MODE (f)-poza (t)- w trybie
 
     lcd.clear();
     lcd.print("TRANSISTOR MODE");
     currentMode = MODE_TRANSISTOR;
     delay(500);
   }
-
   lastState2 = currentState2;
   lastState3 = currentState3;
 }
@@ -221,16 +236,11 @@ void startInfo(){
   lcd.print("test a component"); //Wyświetlenie tekstu
   lcd.setCursor(0, 1); //Ustawienie kursora
   lcd.print("choose 1r-2d-3t"); //Wyświetlenie tekstu
-  //delay(50);
-
-  //lcd.cursor(); //Włącznie kursora
-  //lcd.blink(); //Włącznie kursora
-  //lcd.clear();
 }
 
 void handleClick(){
-
-  digitalWrite ( TEST_DIODE_5V, LOW);
+  digitalWrite(TEST_TRANSISTOR_5V, LOW);// wylaczam baze na tranzystorze
+  digitalWrite ( TEST_DIODE_5V, LOW);// wylaczam napiecie na diodzie
   currentMode = MODE_RESISTOR;
 
 // gdy program jest juz w trybie to nie wyswietla ciagle inf o trybie
@@ -240,17 +250,17 @@ void handleClick(){
     delay(500);
     inResMode = true;
   }
-  
   lcd.clear();
   lcd.print("Estiamted Ohms:");
   lcd.setCursor(0,1);
   lcd.print("-> ");
-
 }
 
 void handleDoubleClick(){
-  digitalWrite ( TEST_DIODE_5V, LOW);    
+  digitalWrite(TEST_TRANSISTOR_5V, LOW);// wylaczam baze na tranzystorze
+  digitalWrite ( TEST_DIODE_5V, LOW);// wylaczam napiecie na diodzie
+ 
   currentMode = MODE_MENU;
-  inResMode = false;
+  inResMode = false; // wyszedlem z trybu resistor MODE (f)-poza (t)- w trybie
   startInfo();
 }
