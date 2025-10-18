@@ -116,9 +116,9 @@ Urządzenie jest zasilane z portu **USB (5V)** lub z zewnętrznego źródła 5V.
 
 ## 📸 Przykładowy wygląd urządzenia
 
-```markdown
+
 ![Tester Elementów - Arduino](dokumentacja-zdjecia/circuit0fProject.png)
-```
+
 
 ---
 
@@ -194,9 +194,9 @@ Install these from the **Arduino IDE Library Manager**.
 
 ## 📸 Example Photo
 
-```markdown
+
 ![Electronic Component Tester - Arduino](dokumentacja-zdjecia/circuit0fProject.png)
-```
+
 
 ---## 🔌 Wiring (Pinout)
 
